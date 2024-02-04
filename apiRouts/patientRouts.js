@@ -2,6 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 
+var cacheService = require("express-api-cache");
+var cache = cacheService.cache;
+
 const {
   getpatientByIdValidator,
   createPatientValidator,
@@ -17,7 +20,10 @@ const {
   updatePatient,
 } = require("../service/patientService");
 
-router.route("/").get(getPatients).post(createPatientValidator, createPatent);
+router
+  .route("/", cache("10 minutes"))
+  .get(getPatients)
+  .post(createPatientValidator, createPatent);
 
 router
   .route("/:id")
