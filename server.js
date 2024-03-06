@@ -36,7 +36,7 @@ app.use("/api/v1/tests/", recordRoute);
 app.all("*", (req, res, next) => {
   //   const err = new Error(`cant fing this route ${req.originalUrl}`);
   //  next(err.message); // this next will send the error to global error handle middleWare
-  next(new ApiError(`cant fing this route ${req.originalUrl}`, 400)); // this next will send the error to global error handle middleWare
+  next(new ApiError(`cant find this route ${req.originalUrl}`, 400)); // this next will send the error to global error handle middleWare
 });
 
 app.listen(PORT, () => {

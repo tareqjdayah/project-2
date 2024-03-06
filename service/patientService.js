@@ -12,8 +12,6 @@ exports.getPatients = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit; // Example: 2 - 1 = 1 => 1*10 = 10 so skip 10 items and get from >=10
   const patient = await patientModel
     .find({})
-    .skip(skip)
-    .limit(limit)
     .populate({ path: "tests", select: "date , type , reading-_id" });
 
   res
