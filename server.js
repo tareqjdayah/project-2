@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const dbConnection = require("./config/database");
 const morgan = require("morgan");
+const usersRoute = require("./apiRouts/usersRoute");
 const patientRoute = require("./apiRouts/patientRouts");
 const recordRoute = require("./apiRouts/recordRouts");
 const ApiError = require("./utils/apiError");
@@ -29,8 +30,13 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Mount Routes
-app.use("/api/v1/patients", patientRoute);
+app.use("/patients", patientRoute);
 app.use("/api/v1/tests/", recordRoute);
+app.use("/users", usersRoute);
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`, req.body);
+  next();
+});
 
 //Handle unhandled route
 app.all("*", (req, res, next) => {
