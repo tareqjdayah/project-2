@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const patientSchema = new mongoose.Schema({
+  test_id: {
+    type: String,
+  },
+  date_tested: {
+    type: String,
+  },
   first_name: {
     type: String,
     required: true,
@@ -23,18 +29,9 @@ const patientSchema = new mongoose.Schema({
   date_of_birth: {
     type: String,
   },
-  condition: {
-    type: String,
-    enum: ["normal", "critical"],
-    default: "normal",
-  },
+  conditions: [String],
 
-  // record: [
-  //   {
-  //     type: mongoose.Schema.ObjectId,
-  //     ref: "records",
-  //   },
-  // ],
+  tests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Test" }],
 });
 
 const patientModel = mongoose.model("patients", patientSchema);

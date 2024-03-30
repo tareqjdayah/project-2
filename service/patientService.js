@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 
 const patientModel = require("../models/patientModel");
+const testsModel = require("../models/testsModel");
 
 const apiError = require("../utils/apiError");
 
@@ -75,6 +76,52 @@ exports.updatePatient = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json(patient);
 });
+
+exports.getPatientCriticalConditions = asyncHandler(async (req, res) => {
+  // Use `find` to get all matching documents instead of just one
+  const patientsWithHighBP = await patientModel.find({
+    conditions: { $in: ["Blood Pressure High"] },
+  });
+
+  // Check if any patients were found
+  if (patientsWithHighBP.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No patients found with high blood pressure." });
+  }
+
+  res.status(200).json(patientsWithHighBP);
+});
+
+exports.removeCritical = asyncHandler(async (req, res, next) => {
+  const patientId = req.params.patientId;
+  const testId = req.params.testId;
+  const { category, date, nurse_name, readings } = req.body;
+
+  const test = await testsModel.findByIdAndUpdate(testId, {
+    category,
+    date,
+    nurse_name,
+    $set: {
+      "readings.diastolic": readings.diastolic,
+      "readings.systolic": readings.systolic,
+    },
+  });
+  const patient = await patientModel.findByIdAndUpdate(
+    patientId,
+    {
+      $unset: { test_id: "", date_tested: "", conditions: "" },
+    },
+    { new: true }
+  );
+
+  if (!patient) {
+    return next(new apiError("This patient not found", 404));
+  }
+
+  res.status(200).json({ success: true, data: patient });
+});
+
 // //@GET Method
 // exports.getPatients = asyncHandler(async (req, res) => {
 //   const page = req.query.page * 1 || 1;

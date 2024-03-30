@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const dbConnection = require("./config/database");
 const morgan = require("morgan");
 const usersRoute = require("./apiRouts/usersRoute");
+const testsRoute = require("./apiRouts/testsRoute");
 const patientRoute = require("./apiRouts/patientRouts");
 const recordRoute = require("./apiRouts/recordRouts");
 const ApiError = require("./utils/apiError");
@@ -30,7 +31,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Mount Routes
-app.use("/patients", patientRoute);
+app.use("/patients", patientRoute, testsRoute);
 app.use("/api/v1/tests/", recordRoute);
 app.use("/users", usersRoute);
 app.use((req, res, next) => {
